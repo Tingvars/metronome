@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Metronome</title>
+
+        <link rel="stylesheet" href="style.css">
+        <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
+
+    </head>
+    <body>
+
+        <div class="metronomebody">
+            <div class="tempoboxpadding">      
+                <div class = "tempobox">
+                    <div class="tempotext" id="tempo">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button id="play">Play!</button>
+        <button id="stop">Stop</button>
+        
+        <div class="slidecontainer">
+            <input type="range" min="1" max="250" value="100" class="slider" id="tempoRange">
+          </div>
+
+         <script type="text/javascript" src="script.js"></script>
+    </body>
+</html>
