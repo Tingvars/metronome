@@ -1,5 +1,5 @@
-var slider = document.getElementById("tempoRange");
-var output = document.getElementById("tempo");
+const slider = document.getElementById("tempoRange");
+const output = document.getElementById("tempo");
 let tempovalue = (60 / slider.value);
 let slidervalue = slider.value;
 let buttonpressed = false;
@@ -7,10 +7,11 @@ output.innerHTML = slider.value;
 
 slider.oninput = function() {
   output.innerHTML = this.value;
+  slidervalue = this.value;
   tempovalue = (60 / slider.value);
   if (buttonpressed = false) {
-    stopplayback;
-    scheduler();
+    stopplayback();
+    startplayback();
     } 
 } 
       
@@ -21,7 +22,7 @@ slider.oninput = function() {
     let nextNotetime = audioContext.currentTime;
     let timerID;
 
-    fetch("/tick.wav")
+    fetch("tick.wav")
     .then(data => data.arrayBuffer())
     .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
     .then(decodedAudio => {
@@ -33,7 +34,7 @@ slider.oninput = function() {
         playSound.buffer = tick;
         playSound.connect(audioContext.destination);
       playSound.start(time);
-      beatflash();
+      beatflash();    
     }
 
     function scheduler() {
@@ -45,25 +46,30 @@ slider.oninput = function() {
     }
 
     function stopplayback() {
-        let circle0 = document.querySelector(".littlecircle0");
+      const circle0 = document.querySelector(".outercircle");
+      const tempotext = document.querySelector(".tempotext");
+        tempotext.style.color = "rgb(28, 117, 16)";
         circle0.style.borderColor = "grey";
         buttonpressed = false;
         clearTimeout(timerID);
     }
 
     function startplayback() {
-        let circle0 = document.querySelector(".littlecircle0");
+      const circle0 = document.querySelector(".outercircle");
+      const tempotext = document.querySelector(".tempotext");
         circle0.style.borderColor = "black";
+        tempotext.style.color = "rgb(62, 240, 38)";
         buttonpressed = true;
         scheduler();
     }
 
     function beatflash() {
-        let circle1 = document.querySelector(".littlecircle1");
-        let circle2 = document.querySelector(".littlecircle2");
-        let circle3 = document.querySelector(".littlecircle3");
-        let circle4 = document.querySelector(".littlecircle4");
+      const circle1 = document.querySelector(".circle1");
+      const circle2 = document.querySelector(".circle2");
+      const circle3 = document.querySelector(".circle3");
+      const circle4 = document.querySelector(".circle4");
         let timemeasure = (60000 / slidervalue);
+        if (timemeasure > 400) {
             circle4.style.borderColor = "red";
         setTimeout(function() {           
             circle3.style.borderColor = "red";
@@ -79,7 +85,19 @@ slider.oninput = function() {
             circle3.style.borderColor = "black";
             circle2.style.borderColor = "black";
             circle1.style.borderColor = "black";
-          }, (timemeasure * 0.9));
+          }, (timemeasure * 0.8));
+        } else {
+          circle4.style.borderColor = "red";
+          circle3.style.borderColor = "red";
+            circle2.style.borderColor = "red";
+            circle1.style.borderColor = "red";
+        setTimeout(function() {
+            circle4.style.borderColor = "black";
+            circle3.style.borderColor = "black";
+            circle2.style.borderColor = "black";
+            circle1.style.borderColor = "black";
+          }, (timemeasure * 0.8));
+        }
     }
 
     playButton.onclick = () => startplayback();
