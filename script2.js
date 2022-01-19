@@ -83,28 +83,49 @@ function startplayback() {
 }
 
 function beatflash() {
-    let timemeasure = (60000 / slidervalue);
-    if (timemeasure > 400) {
-        circle3.className = "circle circle3lit";
-        setTimeout(function() {
-            circle2.className = "circle circle2lit";
-        }, (timemeasure * 0.25));
-        setTimeout(function() {
-            circle1.className = "circle circle1lit";
-        }, (timemeasure * 0.5));
-        setTimeout(function() {
-            circle3.className = "circle circle3";
-            circle2.className = "circle circle2";
-            circle1.className = "circle circle1";
-        }, (timemeasure * 0.75));
-    } else {
-        circle3.className = "circle circle3lit";
-        circle2.className = "circle circle2lit";
-        circle1.className = "circle circle1lit";
-        setTimeout(function() {
-            circle3.className = "circle circle3";
-            circle2.className = "circle circle2";
-            circle1.className = "circle circle1";
-        }, (timemeasure * 0.8));
+    let starttime = audioContext.currentTime;
+    let timenow = audioContext.currentTime;
+    const timemeasure = (60 / slidervalue);
+    const endtime = starttime + timemeasure;
+    console.log("starttime:" + starttime);
+    console.log("endtime:" + endtime);
+    console.log("currentTime:" + audioContext.currentTime);
+    activatecircle3();
+    while (timenow < endtime) {
+        console.log("currentTime in loop: " + audioContext.currentTime);
+        if (audioContext.currentTime === (starttime + (timemeasure / 4))) {
+            console.log("doing first animationframe");
+            window.requestAnimationFrame(activatecircle2);
+            timenow = audioContext.currentTime;
+        } else if (audioContext.currentTime === (starttime + (timemeasure / 2))) {
+            console.log("doing second animationframe");
+            window.requestAnimationFrame(activatecircle1);
+            timenow = audioContext.currentTime;
+        } else if (audioContext.currentTime === (starttime + (timemeasure * 0.75))) {
+            console.log("doing last animationframe");
+            window.requestAnimationFrame(deactivatecircles);
+            timenow = audioContext.currentTime;
+            if (!(timenow < endtime)) {
+                break;
+            }
+        }
     }
+}
+
+function activatecircle3() {
+    circle3.className = "circle circle3lit";
+}
+
+function activatecircle2() {
+    circle2.className = "circle circle2lit";
+}
+
+function activatecircle1() {
+    circle1.className = "circle circle1lit";
+}
+
+function deactivatecircles() {
+    circle3.className = "circle circle3";
+    circle2.className = "circle circle2";
+    circle1.className = "circle circle1";
 }
