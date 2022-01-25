@@ -83,28 +83,37 @@ function startplayback() {
 }
 
 function beatflash() {
-    let timemeasure = (60000 / slidervalue);
-    if (timemeasure > 400) {
-        circle3.className = "circle circle3lit";
-        setTimeout(function() {
+    let starttime = audioContext.currentTime;
+    let beat1done = false;
+    let beat2done = false;
+    let beat3done = false;
+    let time1 = starttime + ((60 / slidervalue) * 0.25);
+    let time2 = starttime + ((60 / slidervalue) * 0.5);
+    let time3 = starttime + ((60 / slidervalue) * 0.75);
+    let lastcalledframetime;
+    let fpstime = 0.016;
+
+    circle3.className = "circle circle3lit";
+    window.requestAnimationFrame(animate);
+
+    function animate() {
+        if (lastcalledframetime > 0) {
+            fpstime = audioContext.currentTime - lastcalledframetime;
+        }
+        if ((audioContext.currentTime > (time1 - fpstime)) && (audioContext.currentTime < (time1 + fpstime)) && !beat1done) {
             circle2.className = "circle circle2lit";
-        }, (timemeasure * 0.25));
-        setTimeout(function() {
+            beat1done = true;
+        } else if ((audioContext.currentTime > (time2 - fpstime)) && (audioContext.currentTime < (time2 + fpstime)) && !beat2done) {
             circle1.className = "circle circle1lit";
-        }, (timemeasure * 0.5));
-        setTimeout(function() {
+            beat2done = true;
+        } else if ((audioContext.currentTime > (time3 - fpstime)) && (audioContext.currentTime < (time3 + fpstime)) && !beat3done) {
             circle3.className = "circle circle3";
             circle2.className = "circle circle2";
             circle1.className = "circle circle1";
-        }, (timemeasure * 0.75));
-    } else {
-        circle3.className = "circle circle3lit";
-        circle2.className = "circle circle2lit";
-        circle1.className = "circle circle1lit";
-        setTimeout(function() {
-            circle3.className = "circle circle3";
-            circle2.className = "circle circle2";
-            circle1.className = "circle circle1";
-        }, (timemeasure * 0.8));
+            beat3done = true;
+            return;
+        }
+        lastcalledframetime = audioContext.currentTime;
+        window.requestAnimationFrame(animate);
     }
 }
