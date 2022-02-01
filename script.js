@@ -1,6 +1,5 @@
 const slider = document.getElementById("tempoRange");
 const output = document.getElementById("tempo");
-const schedulertimeout = 50.0;
 const secondsinmin = 60;
 const circle1 = document.getElementById("circle1");
 const circle2 = document.getElementById("circle2");
@@ -14,14 +13,14 @@ let metronomerunning = false;
 let tickloaded = false;
 output.innerHTML = slider.value;
 const audioContext = new AudioContext();
-const playButton = document.querySelector('#play');
-const stopButton = document.querySelector('#stop');
+const playbutton = document.querySelector('#play');
+const stopbutton = document.querySelector('#stop');
 let tick;
-let nextNotetime = audioContext.currentTime;
+let nextnotetime = audioContext.currentTime;
 let timerID;
 
-playButton.addEventListener("click", startplayback);
-stopButton.addEventListener("click", stopplayback);
+playbutton.addEventListener("click", startplayback);
+stopbutton.addEventListener("click", stopplayback);
 
 slider.oninput = function() {
     output.innerHTML = this.value;
@@ -56,12 +55,12 @@ function playback(time) {
 }
 
 function scheduler() {
-    tempovalue = (secondsinmin / slider.value);
-    while (nextNotetime < audioContext.currentTime + schedulersmalltime) {
-        nextNotetime += tempovalue;
-        playback(nextNotetime);
+    let tempovalue = (secondsinmin / slider.value);
+    if (nextnotetime <(audioContext.currentTime + schedulersmalltime)) {
+        nextnotetime += tempovalue;
+        playback(nextnotetime);
     }
-    timerID = window.setTimeout(scheduler, schedulertimeout);
+    timerID = window.requestAnimationFrame(scheduler);
 }
 
 function stopplayback() {
@@ -69,7 +68,7 @@ function stopplayback() {
         outercircle.className = "circle outercircleon";
         tempotext.className = "tempotextoff";
         metronomerunning = false;
-        clearTimeout(timerID);
+        window.cancelAnimationFrame(timerID);
     }
 }
 
@@ -84,9 +83,6 @@ function startplayback() {
 
 function beatflash() {
     let starttime = audioContext.currentTime;
-    let beat1done = false;
-    let beat2done = false;
-    let beat3done = false;
     let time1 = starttime + ((60 / slidervalue) * 0.25);
     let time2 = starttime + ((60 / slidervalue) * 0.5);
     let time3 = starttime + ((60 / slidervalue) * 0.75);
@@ -100,18 +96,15 @@ function beatflash() {
         if (lastcalledframetime > 0) {
             fpstime = audioContext.currentTime - lastcalledframetime;
         }
-        if ((audioContext.currentTime > (time1 - fpstime)) && (audioContext.currentTime < (time1 + fpstime)) && !beat1done) {
-            circle2.className = "circle circle2lit";
-            beat1done = true;
-        } else if ((audioContext.currentTime > (time2 - fpstime)) && (audioContext.currentTime < (time2 + fpstime)) && !beat2done) {
-            circle1.className = "circle circle1lit";
-            beat2done = true;
-        } else if ((audioContext.currentTime > (time3 - fpstime)) && (audioContext.currentTime < (time3 + fpstime)) && !beat3done) {
+        if ((audioContext.currentTime > (time3 - fpstime)) && (audioContext.currentTime < (time3 + fpstime)) ) {
             circle3.className = "circle circle3";
             circle2.className = "circle circle2";
             circle1.className = "circle circle1";
-            beat3done = true;
             return;
+        } else if ((audioContext.currentTime > (time2 - fpstime)) && (audioContext.currentTime < (time2 + fpstime)) ) {
+            circle2.className = "circle circle1lit";
+        } else if ((audioContext.currentTime > (time1 - fpstime)) && (audioContext.currentTime < (time1 + fpstime)) ) {
+            circle1.className = "circle circle2lit";
         }
         lastcalledframetime = audioContext.currentTime;
         window.requestAnimationFrame(animate);
